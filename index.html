@@ -13,185 +13,83 @@
             --text: #1F2937;
             --text-light: #6B7280;
             --error: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 1rem;
+            background-color: var(--bg); color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem;
         }
 
         .search-container {
-            background-color: var(--surface);
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            width: 100%;
-            max-width: 400px;
+            background-color: var(--surface); padding: 2.5rem;
+            border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%; max-width: 400px;
         }
 
-        .search-container h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            text-align: center;
-            color: var(--primary);
-        }
+        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; color: var(--primary); }
+        p.subtitle { text-align: center; color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.9rem; }
 
-        .search-container p {
-            text-align: center;
-            color: var(--text-light);
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
+        .status-badge {
+            display: block; text-align: center; padding: 8px; border-radius: 6px;
+            font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;
         }
+        .status-loading { background-color: #FEF3C7; color: #D97706; }
+        .status-success { background-color: #D1FAE5; color: #059669; }
+        .status-error { background-color: #FEE2E2; color: #B91C1C; }
 
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
         input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #D1D5DB;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
+            width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
+            border-radius: 8px; font-size: 1rem;
         }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
+        input:focus { outline: none; border-color: var(--primary); }
 
         button {
-            width: 100%;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.875rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            width: 100%; background-color: var(--primary); color: white;
+            border: none; padding: 0.875rem; border-radius: 8px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
         }
+        button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
+        button:hover:not(:disabled) { background-color: var(--primary-hover); }
 
-        button:hover {
-            background-color: var(--primary-hover);
-        }
+        .error-msg { color: var(--error); font-size: 0.9rem; margin-top: 1rem; text-align: center; display: none; }
 
-        /* Modal / Overlay (Card) */
+        /* Modal Overlay */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5); display: flex;
+            align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; backdrop-filter: blur(4px);
         }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        .modal-overlay.active { opacity: 1; visibility: visible; }
         .card {
-            background-color: var(--surface);
-            padding: 2.5rem;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 450px;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
+            background-color: var(--surface); padding: 2.5rem; border-radius: 16px;
+            width: 90%; max-width: 450px; transform: translateY(20px); transition: 0.3s;
         }
-
-        .modal-overlay.active .card {
-            transform: translateY(0);
-        }
-
-        .card h2 {
-            margin-bottom: 1rem;
-            color: var(--text);
-            font-size: 1.4rem;
-        }
-
-        .info-row {
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #E5E7EB;
-        }
+        .modal-overlay.active .card { transform: translateY(0); }
+        .card h2 { margin-bottom: 1.5rem; color: var(--text); }
         
-        .info-row:last-of-type {
-            border-bottom: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .info-label {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .info-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary);
-            word-break: break-word;
-        }
-
-        .close-btn {
-            background-color: #E5E7EB;
-            color: var(--text);
-            margin-top: 1rem;
-        }
-
-        .close-btn:hover {
-            background-color: #D1D5DB;
-        }
-
-        .error-msg {
-            color: var(--error);
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            text-align: center;
-            display: none;
-        }
+        .info-row { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #E5E7EB; }
+        .info-row:last-of-type { border-bottom: none; }
+        .info-label { font-size: 0.85rem; color: var(--text-light); text-transform: uppercase; }
+        .info-value { font-size: 1.2rem; font-weight: 600; color: var(--primary); }
+        
+        .close-btn { background-color: #E5E7EB; color: var(--text); margin-top: 1rem; }
     </style>
 </head>
 <body>
 
     <div class="search-container">
         <h1>Portal do Aluno</h1>
-        <p>Consulte seu código de estudante</p>
+        <p class="subtitle">Consulte seu código de estudante</p>
+
+        <div id="statusBadge" class="status-badge status-loading">Carregando base de dados...</div>
 
         <div class="form-group">
             <label for="firstName">Primeiro Nome</label>
@@ -203,57 +101,75 @@
             <input type="date" id="dob" required>
         </div>
 
-        <button onclick="buscarAluno()">Consultar</button>
-        <div id="errorMsg" class="error-msg">Aluno não encontrado. Verifique os dados inseridos.</div>
+        <button id="btnConsultar" onclick="buscarAluno()" disabled>Consultar</button>
+        <div id="errorMsg" class="error-msg">Aluno não encontrado.</div>
     </div>
 
     <div class="modal-overlay" id="modalOverlay">
         <div class="card">
             <h2>Resultado da Consulta</h2>
-            
             <div class="info-row">
                 <div class="info-label">Nome Completo</div>
                 <div class="info-value" id="resNome"></div>
             </div>
-            
             <div class="info-row">
                 <div class="info-label">Código do Estudante</div>
                 <div class="info-value" id="resCodigo"></div>
             </div>
-
             <div class="info-row">
                 <div class="info-label">Turma</div>
                 <div class="info-value" id="resTurma" style="color: var(--text); font-size: 1rem; font-weight: 400;"></div>
             </div>
-
             <button class="close-btn" onclick="fecharModal()">Fechar</button>
         </div>
     </div>
 
     <script>
         let estudantesData = [];
+        const btnConsultar = document.getElementById('btnConsultar');
+        const statusBadge = document.getElementById('statusBadge');
 
-        // Ao carregar a página, já fazemos o download silencioso do CSV
         window.onload = async () => {
             try {
-                // IMPORTANTE: Certifique-se de que o arquivo no Github se chame exatamente "estudantes.csv"
-                const response = await fetch('./estudantes.csv');
-                if (!response.ok) throw new Error("Arquivo CSV não encontrado.");
+                // Tenta carregar o arquivo com o nome exato (incluindo o espaço)
+                const response = await fetch('./estudante_info.csv');
+                
+                if (!response.ok) {
+                    throw new Error("Arquivo não encontrado.");
+                }
                 
                 const csvText = await response.text();
                 parseCSV(csvText);
+                
+                // Sucesso
+                statusBadge.className = 'status-badge status-success';
+                statusBadge.innerText = 'Base de dados carregada! (' + estudantesData.length + ' alunos)';
+                btnConsultar.disabled = false;
+
             } catch (error) {
-                console.error("Erro ao carregar os dados: ", error);
+                console.error(error);
+                statusBadge.className = 'status-badge status-error';
+                
+                // Mensagem específica se estiver rodando localmente sem servidor
+                if (window.location.protocol === 'file:') {
+                    statusBadge.innerText = 'Erro: Você está abrindo o arquivo localmente. Para o teste funcionar, ele precisa estar no GitHub Pages ou em um servidor local.';
+                } else {
+                    statusBadge.innerText = 'Erro: Arquivo "estudante info.csv" não encontrado na pasta.';
+                }
             }
         };
 
-        // Função nativa para interpretar o CSV (separado por ponto e vírgula)
         function parseCSV(text) {
             const lines = text.split('\n');
             if (lines.length === 0) return;
 
-            // Pega o cabeçalho
-            const headers = lines[0].replace(/\r/g, '').split(';');
+            // Limpa caracteres invisíveis (BOM) que o Excel costuma colocar
+            let headerLine = lines[0].replace(/\r/g, '');
+            if (headerLine.charCodeAt(0) === 0xFEFF) {
+                headerLine = headerLine.substring(1);
+            }
+            
+            const headers = headerLine.split(';').map(h => h.trim());
 
             for (let i = 1; i < lines.length; i++) {
                 const currentLine = lines[i].replace(/\r/g, '');
@@ -263,17 +179,16 @@
                 const estudante = {};
                 
                 headers.forEach((header, index) => {
-                    estudante[header.trim()] = values[index] ? values[index].trim() : '';
+                    estudante[header] = values[index] ? values[index].trim() : '';
                 });
 
                 estudantesData.push(estudante);
             }
         }
 
-        // Função de formatação da data do input (YYYY-MM-DD) para o padrão do CSV (DD/MM/YYYY)
-        function formatarDataParaCSV(dataInput) {
+        function formatarData(dataInput) {
             if (!dataInput) return '';
-            const partes = dataInput.split('-'); // [ano, mes, dia]
+            const partes = dataInput.split('-');
             return `${partes[2]}/${partes[1]}/${partes[0]}`;
         }
 
@@ -283,16 +198,19 @@
             const errorMsg = document.getElementById('errorMsg');
 
             if (!firstNameInput || !dobInput) {
-                errorMsg.innerText = "Por favor, preencha todos os campos.";
+                errorMsg.innerText = "Preencha o nome e a data.";
                 errorMsg.style.display = "block";
                 return;
             }
 
-            const dataFormatada = formatarDataParaCSV(dobInput);
+            const dataFormatada = formatarData(dobInput);
 
-            // Filtra o banco de dados carregado na memória
+            // Filtro da busca
             const alunoEncontrado = estudantesData.find(aluno => {
-                const nomeCompleto = aluno['NOME'] ? aluno['NOME'].toLowerCase() : '';
+                // Garante que a coluna NOME existe
+                if (!aluno['NOME'] || !aluno['DATA DE NASCIMENTO DO ESTUDANTE']) return false;
+                
+                const nomeCompleto = aluno['NOME'].toLowerCase();
                 const primeiroNomeCSV = nomeCompleto.split(' ')[0];
                 const dataCSV = aluno['DATA DE NASCIMENTO DO ESTUDANTE'];
 
@@ -301,37 +219,24 @@
 
             if (alunoEncontrado) {
                 errorMsg.style.display = "none";
-                mostrarModal(alunoEncontrado);
+                
+                // Preenche o Modal
+                document.getElementById('resNome').innerText = aluno['NOME'];
+                document.getElementById('resCodigo').innerText = aluno['CODIGO'];
+                document.getElementById('resTurma').innerText = aluno['TURMA'] || 'Não informada';
+                
+                document.getElementById('modalOverlay').classList.add('active');
             } else {
-                errorMsg.innerText = "Aluno não encontrado. Verifique o nome e a data de nascimento.";
+                errorMsg.innerText = "Aluno não encontrado. Verifique os dados.";
                 errorMsg.style.display = "block";
             }
         }
 
-        function mostrarModal(aluno) {
-            document.getElementById('resNome').innerText = aluno['NOME'];
-            document.getElementById('resCodigo').innerText = aluno['CODIGO'];
-            
-            // Opcional: Mostrando a turma baseada na estrutura do seu CSV
-            document.getElementById('resTurma').innerText = aluno['TURMA'] || 'Não informada';
-            
-            document.getElementById('modalOverlay').classList.add('active');
-        }
-
         function fecharModal() {
             document.getElementById('modalOverlay').classList.remove('active');
-            
-            // Limpa os campos após a consulta (Opcional)
             document.getElementById('firstName').value = '';
             document.getElementById('dob').value = '';
         }
-
-        // Fechar modal ao clicar fora do card
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                fecharModal();
-            }
-        });
     </script>
 </body>
 </html>
