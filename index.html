@@ -3,240 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Código do Estudante</title>
+    <title>Consulta de Código - Oficial</title>
     <style>
-        :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338CA;
-            --bg: #F3F4F6;
-            --surface: #FFFFFF;
-            --text: #1F2937;
-            --text-light: #6B7280;
-            --error: #EF4444;
-            --success: #10B981;
-            --warning: #F59E0B;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-
-        body {
-            background-color: var(--bg); color: var(--text);
-            display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 1rem;
-        }
-
-        .search-container {
-            background-color: var(--surface); padding: 2.5rem;
-            border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            width: 100%; max-width: 400px;
-        }
-
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; text-align: center; color: var(--primary); }
-        p.subtitle { text-align: center; color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.9rem; }
-
-        .status-badge {
-            display: block; text-align: center; padding: 8px; border-radius: 6px;
-            font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;
-        }
-        .status-loading { background-color: #FEF3C7; color: #D97706; }
-        .status-success { background-color: #D1FAE5; color: #059669; }
-        .status-error { background-color: #FEE2E2; color: #B91C1C; }
-
-        .form-group { margin-bottom: 1.25rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
-        input {
-            width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
-            border-radius: 8px; font-size: 1rem;
-        }
-        input:focus { outline: none; border-color: var(--primary); }
-
-        button {
-            width: 100%; background-color: var(--primary); color: white;
-            border: none; padding: 0.875rem; border-radius: 8px;
-            font-size: 1rem; font-weight: 600; cursor: pointer;
-        }
-        button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
-        button:hover:not(:disabled) { background-color: var(--primary-hover); }
-
-        .error-msg { color: var(--error); font-size: 0.9rem; margin-top: 1rem; text-align: center; display: none; }
-
-        /* Modal Overlay */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5); display: flex;
-            align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; backdrop-filter: blur(4px);
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        .card {
-            background-color: var(--surface); padding: 2.5rem; border-radius: 16px;
-            width: 90%; max-width: 450px; transform: translateY(20px); transition: 0.3s;
-        }
-        .modal-overlay.active .card { transform: translateY(0); }
-        .card h2 { margin-bottom: 1.5rem; color: var(--text); }
+        :root { --p: #4F46E5; --bg: #F3F4F6; --txt: #1F2937; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--txt); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .box { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h1 { font-size: 1.25rem; color: var(--p); text-align: center; margin-bottom: 1.5rem; }
+        .field { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; opacity: 0.7; }
+        input { width: 100%; padding: 0.8rem; border: 1px solid #DDD; border-radius: 0.5rem; outline: none; }
+        input:focus { border-color: var(--p); ring: 2px var(--p); }
+        button { width: 100%; padding: 1rem; background: var(--p); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .info-row { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #E5E7EB; }
-        .info-row:last-of-type { border-bottom: none; }
-        .info-label { font-size: 0.85rem; color: var(--text-light); text-transform: uppercase; }
-        .info-value { font-size: 1.2rem; font-weight: 600; color: var(--primary); }
-        
-        .close-btn { background-color: #E5E7EB; color: var(--text); margin-top: 1rem; }
+        /* Debug Console */
+        #log { margin-top: 1rem; font-size: 0.7rem; color: #666; background: #EEE; padding: 10px; border-radius: 5px; display: none; }
+
+        /* Modal */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 10; }
+        .card { background: white; padding: 2.5rem; border-radius: 1.5rem; width: 90%; max-width: 400px; text-align: center; }
+        .code { font-size: 1.5rem; font-weight: 800; color: var(--p); margin: 1rem 0; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <div class="search-container">
-        <h1>Portal do Aluno</h1>
-        <p class="subtitle">Consulte seu código de estudante</p>
+<div class="box">
+    <h1>Consulta de Código</h1>
+    
+    <div id="log">Aguardando carregamento...</div>
 
-        <div id="statusBadge" class="status-badge status-loading">Carregando base de dados...</div>
-
-        <div class="form-group">
-            <label for="firstName">Primeiro Nome</label>
-            <input type="text" id="firstName" placeholder="Ex: Izabella" required>
-        </div>
-
-        <div class="form-group">
-            <label for="dob">Data de Nascimento</label>
-            <input type="date" id="dob" required>
-        </div>
-
-        <button id="btnConsultar" onclick="buscarAluno()" disabled>Consultar</button>
-        <div id="errorMsg" class="error-msg">Aluno não encontrado.</div>
+    <div class="field">
+        <label>PRIMEIRO NOME</label>
+        <input type="text" id="nome" placeholder="Ex: Izabella">
     </div>
-
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="card">
-            <h2>Resultado da Consulta</h2>
-            <div class="info-row">
-                <div class="info-label">Nome Completo</div>
-                <div class="info-value" id="resNome"></div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Código do Estudante</div>
-                <div class="info-value" id="resCodigo"></div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Turma</div>
-                <div class="info-value" id="resTurma" style="color: var(--text); font-size: 1rem; font-weight: 400;"></div>
-            </div>
-            <button class="close-btn" onclick="fecharModal()">Fechar</button>
-        </div>
+    <div class="field">
+        <label>DATA DE NASCIMENTO</label>
+        <input type="date" id="nasc">
     </div>
+    
+    <button id="btn" onclick="consultar()" disabled>Verificar Código</button>
+</div>
 
-    <script>
-        let estudantesData = [];
-        const btnConsultar = document.getElementById('btnConsultar');
-        const statusBadge = document.getElementById('statusBadge');
+<div class="overlay" id="modal">
+    <div class="card">
+        <div style="font-size: 0.8rem; text-transform: uppercase; opacity: 0.6;">Seu Código é:</div>
+        <div class="code" id="resCod"></div>
+        <div id="resNome" style="font-weight: 600; margin-bottom: 0.5rem;"></div>
+        <div id="resTurma" style="font-size: 0.9rem; opacity: 0.8;"></div>
+        <button onclick="document.getElementById('modal').style.display='none'" style="background: #EEE; color: #333; margin-top: 2rem;">Fechar</button>
+    </div>
+</div>
 
-        window.onload = async () => {
-            try {
-                // Tenta carregar o arquivo com o nome exato (incluindo o espaço)
-                const response = await fetch('./estudante_info.csv');
-                
-                if (!response.ok) {
-                    throw new Error("Arquivo não encontrado.");
-                }
-                
-                const csvText = await response.text();
-                parseCSV(csvText);
-                
-                // Sucesso
-                statusBadge.className = 'status-badge status-success';
-                statusBadge.innerText = 'Base de dados carregada! (' + estudantesData.length + ' alunos)';
-                btnConsultar.disabled = false;
+<script>
+    let db = [];
+    const log = document.getElementById('log');
+    const btn = document.getElementById('btn');
 
-            } catch (error) {
-                console.error(error);
-                statusBadge.className = 'status-badge status-error';
-                
-                // Mensagem específica se estiver rodando localmente sem servidor
-                if (window.location.protocol === 'file:') {
-                    statusBadge.innerText = 'Erro: Você está abrindo o arquivo localmente. Para o teste funcionar, ele precisa estar no GitHub Pages ou em um servidor local.';
-                } else {
-                    statusBadge.innerText = 'Erro: Arquivo "estudante info.csv" não encontrado na pasta.';
-                }
-            }
-        };
+    // Função de LOG para ajudar você a ver o erro no celular/navegador
+    function debug(msg, isError = false) {
+        log.style.display = 'block';
+        log.innerHTML = msg;
+        if(isError) log.style.color = 'red';
+    }
 
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            if (lines.length === 0) return;
-
-            // Limpa caracteres invisíveis (BOM) que o Excel costuma colocar
-            let headerLine = lines[0].replace(/\r/g, '');
-            if (headerLine.charCodeAt(0) === 0xFEFF) {
-                headerLine = headerLine.substring(1);
-            }
+    window.onload = async () => {
+        try {
+            // Tenta carregar. Se falhar, tenta com o nome alternativo.
+            // O encodeURIComponent lida com o espaço no nome do arquivo automaticamente.
+            const fileName = "estudante_info.csv"; 
+            debug("Carregando base de dados...");
             
-            const headers = headerLine.split(';').map(h => h.trim());
-
+            const resp = await fetch(encodeURIComponent(fileName));
+            if (!resp.ok) throw new Error("Não foi possível encontrar o arquivo CSV. Verifique o nome no GitHub.");
+            
+            const text = await resp.text();
+            const lines = text.split(/\r?\n/);
+            
+            // Pega o cabeçalho e limpa o BOM do Excel
+            const headers = lines[0].replace(/^\uFEFF/, '').split(';').map(h => h.trim());
+            
             for (let i = 1; i < lines.length; i++) {
-                const currentLine = lines[i].replace(/\r/g, '');
-                if (!currentLine) continue;
-
-                const values = currentLine.split(';');
-                const estudante = {};
-                
-                headers.forEach((header, index) => {
-                    estudante[header] = values[index] ? values[index].trim() : '';
-                });
-
-                estudantesData.push(estudante);
-            }
-        }
-
-        function formatarData(dataInput) {
-            if (!dataInput) return '';
-            const partes = dataInput.split('-');
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
-        }
-
-        function buscarAluno() {
-            const firstNameInput = document.getElementById('firstName').value.trim().toLowerCase();
-            const dobInput = document.getElementById('dob').value;
-            const errorMsg = document.getElementById('errorMsg');
-
-            if (!firstNameInput || !dobInput) {
-                errorMsg.innerText = "Preencha o nome e a data.";
-                errorMsg.style.display = "block";
-                return;
+                if (!lines[i].trim()) continue;
+                const cols = lines[i].split(';');
+                let obj = {};
+                headers.forEach((h, idx) => obj[h] = cols[idx] ? cols[idx].trim() : '');
+                db.push(obj);
             }
 
-            const dataFormatada = formatarData(dobInput);
-
-            // Filtro da busca
-            const alunoEncontrado = estudantesData.find(aluno => {
-                // Garante que a coluna NOME existe
-                if (!aluno['NOME'] || !aluno['DATA DE NASCIMENTO DO ESTUDANTE']) return false;
-                
-                const nomeCompleto = aluno['NOME'].toLowerCase();
-                const primeiroNomeCSV = nomeCompleto.split(' ')[0];
-                const dataCSV = aluno['DATA DE NASCIMENTO DO ESTUDANTE'];
-
-                return primeiroNomeCSV === firstNameInput && dataCSV === dataFormatada;
-            });
-
-            if (alunoEncontrado) {
-                errorMsg.style.display = "none";
-                
-                // Preenche o Modal
-                document.getElementById('resNome').innerText = aluno['NOME'];
-                document.getElementById('resCodigo').innerText = aluno['CODIGO'];
-                document.getElementById('resTurma').innerText = aluno['TURMA'] || 'Não informada';
-                
-                document.getElementById('modalOverlay').classList.add('active');
-            } else {
-                errorMsg.innerText = "Aluno não encontrado. Verifique os dados.";
-                errorMsg.style.display = "block";
-            }
+            debug("Base pronta: " + db.length + " alunos carregados.");
+            btn.disabled = false;
+        } catch (e) {
+            debug("ERRO: " + e.message, true);
         }
+    };
 
-        function fecharModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-            document.getElementById('firstName').value = '';
-            document.getElementById('dob').value = '';
+    function consultar() {
+        const inputNome = document.getElementById('nome').value.trim().toLowerCase();
+        const inputData = document.getElementById('nasc').value; // YYYY-MM-DD
+        
+        if (!inputNome || !inputData) return alert("Preencha os dois campos.");
+
+        // Converte data do input para DD/MM/YYYY
+        const [y, m, d] = inputData.split('-');
+        const dataBusca = `${d}/${m}/${y}`;
+
+        const aluno = db.find(a => {
+            const nomeCSV = a['NOME'] ? a['NOME'].toLowerCase() : '';
+            const dataCSV = a['DATA DE NASCIMENTO DO ESTUDANTE'];
+            return nomeCSV.startsWith(inputNome) && dataCSV === dataBusca;
+        });
+
+        if (aluno) {
+            document.getElementById('resCod').innerText = aluno['CODIGO'];
+            document.getElementById('resNome').innerText = aluno['NOME'];
+            document.getElementById('resTurma').innerText = aluno['TURMA'];
+            document.getElementById('modal').style.display = 'flex';
+        } else {
+            alert("Aluno não encontrado. Confira se o nome está correto e a data de nascimento.");
         }
-    </script>
+    }
+</script>
 </body>
 </html>
