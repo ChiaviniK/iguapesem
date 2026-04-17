@@ -3,83 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Código - Oficial</title>
+    <title>Portal de Acesso ao Questionário</title>
     <style>
-        :root { --p: #4F46E5; --bg: #F3F4F6; --txt: #1F2937; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--txt); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .box { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        h1 { font-size: 1.25rem; color: var(--p); text-align: center; margin-bottom: 1.5rem; }
-        .field { margin-bottom: 1rem; }
-        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; opacity: 0.7; }
-        input { width: 100%; padding: 0.8rem; border: 1px solid #DDD; border-radius: 0.5rem; outline: none; }
-        input:focus { border-color: var(--p); ring: 2px var(--p); }
-        button { width: 100%; padding: 1rem; background: var(--p); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; margin-top: 1rem; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        :root { --p: #4F46E5; --s: #10B981; --bg: #F3F4F6; --txt: #1F2937; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--txt); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .box { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 420px; }
+        h1 { font-size: 1.4rem; color: var(--p); text-align: center; margin-bottom: 0.5rem; }
+        p.desc { font-size: 0.9rem; text-align: center; opacity: 0.7; margin-bottom: 2rem; }
         
-        /* Debug Console */
-        #log { margin-top: 1rem; font-size: 0.7rem; color: #666; background: #EEE; padding: 10px; border-radius: 5px; display: none; }
+        .field { margin-bottom: 1.2rem; }
+        label { display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--p); text-transform: uppercase; }
+        input { width: 100%; padding: 0.85rem; border: 2px solid #E5E7EB; border-radius: 0.6rem; outline: none; font-size: 1rem; transition: 0.2s; }
+        input:focus { border-color: var(--p); background: #F9FAFF; }
+        
+        .btn-main { width: 100%; padding: 1rem; background: var(--p); color: white; border: none; border-radius: 0.6rem; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4); }
+        .btn-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* Modal */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 10; }
-        .card { background: white; padding: 2.5rem; border-radius: 1.5rem; width: 90%; max-width: 400px; text-align: center; }
-        .code { font-size: 1.5rem; font-weight: 800; color: var(--p); margin: 1rem 0; letter-spacing: 1px; }
+        #debug { margin-top: 1.5rem; font-size: 0.75rem; padding: 10px; border-radius: 8px; background: #fdf2f2; color: #991b1b; display: none; border: 1px solid #fecaca; }
+
+        /* Modal / Card de Resultado */
+        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+        .card { background: white; padding: 2rem; border-radius: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .result-label { font-size: 0.7rem; font-weight: 800; opacity: 0.5; text-transform: uppercase; margin-bottom: 0.2rem; }
+        .result-value { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between; }
+        
+        .copy-badge { font-size: 0.7rem; background: #EEF2FF; color: var(--p); padding: 4px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #C7D2FE; }
+        .copy-badge:active { background: var(--p); color: white; }
+
+        .code-display { background: #F8FAFC; border: 2px dashed #CBD5E1; padding: 1rem; border-radius: 0.8rem; text-align: center; margin: 1rem 0; }
+        .code-display strong { font-size: 1.4rem; color: var(--p); letter-spacing: 1px; display: block; }
+
+        .btn-link { display: block; text-align: center; text-decoration: none; background: var(--s); color: white; padding: 1rem; border-radius: 0.6rem; font-weight: 700; margin-top: 1.5rem; transition: 0.3s; }
+        .btn-link:hover { background: #059669; }
+        .btn-close { width: 100%; background: none; border: none; color: #64748B; font-weight: 600; margin-top: 1rem; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h1>Consulta de Código</h1>
+    <h1>Acesso ao Questionário</h1>
+    <p class="desc">Consulte seu código para realizar o login no Instituto Ayrton Senna.</p>
     
-    <div id="log">Aguardando carregamento...</div>
+    <div id="debug"></div>
 
     <div class="field">
-        <label>PRIMEIRO NOME</label>
-        <input type="text" id="nome" placeholder="Ex: Izabella">
+        <label>Seu Primeiro Nome</label>
+        <input type="text" id="nome" placeholder="Ex: Izabella" autocomplete="off">
     </div>
     <div class="field">
-        <label>DATA DE NASCIMENTO</label>
+        <label>Data de Nascimento</label>
         <input type="date" id="nasc">
     </div>
     
-    <button id="btn" onclick="consultar()" disabled>Verificar Código</button>
+    <button id="btn" class="btn-main" onclick="consultar()" disabled>Consultar Dados</button>
 </div>
 
 <div class="overlay" id="modal">
     <div class="card">
-        <div style="font-size: 0.8rem; text-transform: uppercase; opacity: 0.6;">Seu Código é:</div>
-        <div class="code" id="resCod"></div>
-        <div id="resNome" style="font-weight: 600; margin-bottom: 0.5rem;"></div>
-        <div id="resTurma" style="font-size: 0.9rem; opacity: 0.8;"></div>
-        <button onclick="document.getElementById('modal').style.display='none'" style="background: #EEE; color: #333; margin-top: 2rem;">Fechar</button>
+        <h2 style="margin-top:0; font-size: 1.2rem;">Dados Encontrados!</h2>
+        
+        <p style="font-size: 0.85rem; line-height: 1.4; margin-bottom: 1.5rem;">
+            Clique no código abaixo para copiá-lo e use a senha padrão <strong>123456</strong> no site.
+        </p>
+
+        <div class="result-label">Nome do Estudante</div>
+        <div class="result-value" id="resNome"></div>
+
+        <div class="result-label">Seu Código de Acesso</div>
+        <div class="code-display" onclick="copiarCodigo()" title="Clique para copiar">
+            <strong id="resCod"></strong>
+            <span id="copyFeedback" style="font-size: 0.65rem; color: var(--s); display:none; font-weight:bold;">Copiado!</span>
+        </div>
+
+        <div class="result-label">Senha Padrão</div>
+        <div class="result-value">123456 <span class="copy-badge" onclick="navigator.clipboard.writeText('123456')">Copiar</span></div>
+
+        <a href="https://acesso.institutoayrtonsenna.org.br/auth/realms/ias/protocol/openid-connect/auth?client_id=questionary&redirect_uri=https%3A%2F%2Finstrumentocse.org.br%2F&state=b9f636ef-d185-4d62-acd2-ce6986354653&response_mode=fragment&response_type=code&scope=openid&nonce=4cc42e30-6fec-412a-aa5a-4877fc12abb3" 
+           target="_blank" class="btn-link">Acessar Site do Instituto</a>
+
+        <button class="btn-close" onclick="fecharModal()">Voltar</button>
     </div>
 </div>
 
 <script>
     let db = [];
-    const log = document.getElementById('log');
-    const btn = document.getElementById('btn');
+    const fileName = "estudante_info.csv";
 
-    // Função de LOG para ajudar você a ver o erro no celular/navegador
-    function debug(msg, isError = false) {
-        log.style.display = 'block';
-        log.innerHTML = msg;
-        if(isError) log.style.color = 'red';
-    }
-
+    // Carregamento da Base de Dados
     window.onload = async () => {
+        const debugBox = document.getElementById('debug');
         try {
-            // Tenta carregar. Se falhar, tenta com o nome alternativo.
-            // O encodeURIComponent lida com o espaço no nome do arquivo automaticamente.
-            const fileName = "estudante_info.csv"; 
-            debug("Carregando base de dados...");
-            
             const resp = await fetch(encodeURIComponent(fileName));
-            if (!resp.ok) throw new Error("Não foi possível encontrar o arquivo CSV. Verifique o nome no GitHub.");
+            if (!resp.ok) throw new Error("Arquivo CSV não encontrado no GitHub.");
             
             const text = await resp.text();
             const lines = text.split(/\r?\n/);
-            
-            // Pega o cabeçalho e limpa o BOM do Excel
             const headers = lines[0].replace(/^\uFEFF/, '').split(';').map(h => h.trim());
             
             for (let i = 1; i < lines.length; i++) {
@@ -89,38 +108,49 @@
                 headers.forEach((h, idx) => obj[h] = cols[idx] ? cols[idx].trim() : '');
                 db.push(obj);
             }
-
-            debug("Base pronta: " + db.length + " alunos carregados.");
-            btn.disabled = false;
+            document.getElementById('btn').disabled = false;
         } catch (e) {
-            debug("ERRO: " + e.message, true);
+            debugBox.innerText = "Erro: " + e.message;
+            debugBox.style.display = 'block';
         }
     };
 
     function consultar() {
         const inputNome = document.getElementById('nome').value.trim().toLowerCase();
-        const inputData = document.getElementById('nasc').value; // YYYY-MM-DD
+        const inputData = document.getElementById('nasc').value;
         
-        if (!inputNome || !inputData) return alert("Preencha os dois campos.");
+        if (!inputNome || !inputData) return alert("Por favor, preencha nome e data.");
 
-        // Converte data do input para DD/MM/YYYY
         const [y, m, d] = inputData.split('-');
         const dataBusca = `${d}/${m}/${y}`;
 
         const aluno = db.find(a => {
             const nomeCSV = a['NOME'] ? a['NOME'].toLowerCase() : '';
-            const dataCSV = a['DATA DE NASCIMENTO DO ESTUDANTE'];
-            return nomeCSV.startsWith(inputNome) && dataCSV === dataBusca;
+            return nomeCSV.startsWith(inputNome) && a['DATA DE NASCIMENTO DO ESTUDANTE'] === dataBusca;
         });
 
         if (aluno) {
             document.getElementById('resCod').innerText = aluno['CODIGO'];
             document.getElementById('resNome').innerText = aluno['NOME'];
-            document.getElementById('resTurma').innerText = aluno['TURMA'];
             document.getElementById('modal').style.display = 'flex';
         } else {
-            alert("Aluno não encontrado. Confira se o nome está correto e a data de nascimento.");
+            alert("Estudante não encontrado. Verifique os dados e tente novamente.");
         }
+    }
+
+    function copiarCodigo() {
+        const cod = document.getElementById('resCod').innerText;
+        navigator.clipboard.writeText(cod).then(() => {
+            const feedback = document.getElementById('copyFeedback');
+            feedback.style.display = 'block';
+            setTimeout(() => feedback.style.display = 'none', 2000);
+        });
+    }
+
+    function fecharModal() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('nome').value = '';
+        document.getElementById('nasc').value = '';
     }
 </script>
 </body>
