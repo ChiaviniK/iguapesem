@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Código do Estudante</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #F3F4F6;
+            --surface: #FFFFFF;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --error: #EF4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .search-container {
+            background-color: var(--surface);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-container h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .search-container p {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Modal / Overlay (Card) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .card {
+            background-color: var(--surface);
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+
+        .modal-overlay.active .card {
+            transform: translateY(0);
+        }
+
+        .card h2 {
+            margin-bottom: 1rem;
+            color: var(--text);
+            font-size: 1.4rem;
+        }
+
+        .info-row {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .info-row:last-of-type {
+            border-bottom: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            word-break: break-word;
+        }
+
+        .close-btn {
+            background-color: #E5E7EB;
+            color: var(--text);
+            margin-top: 1rem;
+        }
+
+        .close-btn:hover {
+            background-color: #D1D5DB;
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-container">
+        <h1>Portal do Aluno</h1>
+        <p>Consulte seu código de estudante</p>
+
+        <div class="form-group">
+            <label for="firstName">Primeiro Nome</label>
+            <input type="text" id="firstName" placeholder="Ex: Izabella" required>
+        </div>
+
+        <div class="form-group">
+            <label for="dob">Data de Nascimento</label>
+            <input type="date" id="dob" required>
+        </div>
+
+        <button onclick="buscarAluno()">Consultar</button>
+        <div id="errorMsg" class="error-msg">Aluno não encontrado. Verifique os dados inseridos.</div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="card">
+            <h2>Resultado da Consulta</h2>
+            
+            <div class="info-row">
+                <div class="info-label">Nome Completo</div>
+                <div class="info-value" id="resNome"></div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Código do Estudante</div>
+                <div class="info-value" id="resCodigo"></div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Turma</div>
+                <div class="info-value" id="resTurma" style="color: var(--text); font-size: 1rem; font-weight: 400;"></div>
+            </div>
+
+            <button class="close-btn" onclick="fecharModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        let estudantesData = [];
+
+        // Ao carregar a página, já fazemos o download silencioso do CSV
+        window.onload = async () => {
+            try {
+                // IMPORTANTE: Certifique-se de que o arquivo no Github se chame exatamente "estudantes.csv"
+                const response = await fetch('./estudantes.csv');
+                if (!response.ok) throw new Error("Arquivo CSV não encontrado.");
+                
+                const csvText = await response.text();
+                parseCSV(csvText);
+            } catch (error) {
+                console.error("Erro ao carregar os dados: ", error);
+            }
+        };
+
+        // Função nativa para interpretar o CSV (separado por ponto e vírgula)
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            if (lines.length === 0) return;
+
+            // Pega o cabeçalho
+            const headers = lines[0].replace(/\r/g, '').split(';');
+
+            for (let i = 1; i < lines.length; i++) {
+                const currentLine = lines[i].replace(/\r/g, '');
+                if (!currentLine) continue;
+
+                const values = currentLine.split(';');
+                const estudante = {};
+                
+                headers.forEach((header, index) => {
+                    estudante[header.trim()] = values[index] ? values[index].trim() : '';
+                });
+
+                estudantesData.push(estudante);
+            }
+        }
+
+        // Função de formatação da data do input (YYYY-MM-DD) para o padrão do CSV (DD/MM/YYYY)
+        function formatarDataParaCSV(dataInput) {
+            if (!dataInput) return '';
+            const partes = dataInput.split('-'); // [ano, mes, dia]
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function buscarAluno() {
+            const firstNameInput = document.getElementById('firstName').value.trim().toLowerCase();
+            const dobInput = document.getElementById('dob').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!firstNameInput || !dobInput) {
+                errorMsg.innerText = "Por favor, preencha todos os campos.";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            const dataFormatada = formatarDataParaCSV(dobInput);
+
+            // Filtra o banco de dados carregado na memória
+            const alunoEncontrado = estudantesData.find(aluno => {
+                const nomeCompleto = aluno['NOME'] ? aluno['NOME'].toLowerCase() : '';
+                const primeiroNomeCSV = nomeCompleto.split(' ')[0];
+                const dataCSV = aluno['DATA DE NASCIMENTO DO ESTUDANTE'];
+
+                return primeiroNomeCSV === firstNameInput && dataCSV === dataFormatada;
+            });
+
+            if (alunoEncontrado) {
+                errorMsg.style.display = "none";
+                mostrarModal(alunoEncontrado);
+            } else {
+                errorMsg.innerText = "Aluno não encontrado. Verifique o nome e a data de nascimento.";
+                errorMsg.style.display = "block";
+            }
+        }
+
+        function mostrarModal(aluno) {
+            document.getElementById('resNome').innerText = aluno['NOME'];
+            document.getElementById('resCodigo').innerText = aluno['CODIGO'];
+            
+            // Opcional: Mostrando a turma baseada na estrutura do seu CSV
+            document.getElementById('resTurma').innerText = aluno['TURMA'] || 'Não informada';
+            
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function fecharModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            
+            // Limpa os campos após a consulta (Opcional)
+            document.getElementById('firstName').value = '';
+            document.getElementById('dob').value = '';
+        }
+
+        // Fechar modal ao clicar fora do card
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+    </script>
+</body>
+</html>
