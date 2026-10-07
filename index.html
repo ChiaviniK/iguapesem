@@ -119,8 +119,20 @@
         }
     };
 
+    function removerAcentos(str) {
+        return (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        ['nome', 'nasc'].forEach(id => {
+            document.getElementById(id)?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !document.getElementById('btn').disabled) consultar();
+            });
+        });
+    });
+
     function consultar() {
-        const inputNome = document.getElementById('nome').value.trim().toLowerCase();
+        const inputNome = removerAcentos(document.getElementById('nome').value);
         const inputData = document.getElementById('nasc').value;
         
         if (!inputNome || !inputData) return alert("Por favor, preencha o nome e a data.");
@@ -129,7 +141,7 @@
         const dataBusca = `${d}/${m}/${y}`;
 
         const aluno = db.find(a => {
-            const nomeCSV = a['NOME'] ? a['NOME'].toLowerCase() : '';
+            const nomeCSV = removerAcentos(a['NOME']);
             return nomeCSV.startsWith(inputNome) && a['DATA DE NASCIMENTO DO ESTUDANTE'] === dataBusca;
         });
 
